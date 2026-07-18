@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Trip Planner</title>
+  <meta name="description" content="Plan your trip with an AI assistant: itinerary, budget, and activities." />
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  
+  
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #101735;
+      --muted: #8b95b2;
+      --text: #e6e9f2;
+      --accent: #6aa3ff;
+      --accent-2: #8b5cf6;
+      --danger: #ff6b6b;
+      --success: #22c55e;
+      --radius: 14px;
+      --bg-image: none;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -10%, #1b2555 0%, rgba(27,37,85,0) 60%),
+                  radial-gradient(900px 500px at -10% 10%, #1c3c5a 0%, rgba(28,60,90,0) 55%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: var(--bg-image);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: .18;
+      filter: saturate(1.05) contrast(1.02);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card h2 {
+      color: #000;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 0 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 20px rgba(106,163,255,.35);
+    }
+
+    h1 {
+      margin: 0;
+      color: #fff;
+      font-size: 22px;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      color: #000;
+      margin: 2px 0 0;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+    
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 10px 30px rgba(3,8,20,0.25);
+    }
+
+    .hero {
+      background: #000;
+      margin: 10px 0 24px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      border: 1px dashed rgba(255,255,255,0.12);
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    label { font-size: 12px; color: #000; display: block; margin: 0 0 6px; }
+
+    .field { grid-column: span 6; }
+    .field-full { grid-column: span 12; }
+    .field-3 { grid-column: span 3; }
+    .field-4 { grid-column: span 4; }
+    .field-8 { grid-column: span 8; }
+
+    @media (max-width: 900px) {
+      .field, .field-full, .field-3, .field-4, .field-8 { grid-column: span 12; }
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #0f1530;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(106,163,255,.7);
+      box-shadow: 0 0 0 4px rgba(106,163,255,.15);
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: transform .06s ease, box-shadow .2s ease, opacity .2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 24px rgba(106,163,255,.35);
+    }
+    .btn-secondary { background: #1b244d; color: var(--text); border: 1px solid rgba(255,255,255,0.08); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .results {
+      display: grid;
+      gap: 14px;
+    }
+
+    .itinerary-day {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px;
+      background: #0f1530;
+    }
+    span#status {
+      font-size: 0;
+  }
+  #status + .small{ font-size: 0;}
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+    .right { margin-left: auto; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #17214a;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+    body {
+      background: url(./img/banner.jpg);
+    }
+
+    .footer { margin-top: 22px; color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>AI Trip Planner</h1>
+          <p class="subtitle">Generate smart itineraries with preferences, budget, and time in mind.</p>
+        </div>
+      </div>
+      <button id="settings-btn" class="btn btn-secondary">Settings</button>
+    </header>
+
+    <div class="hero card">
+      Tip: Fill in your destination, dates, budget, and interests. Click Generate to see a suggested plan. You can tweak inputs and regenerate.
+    </div>
+
+    <div class="grid">
+      <!-- Form -->
+      <section class="card">
+        <form id="planner-form">
+          <div class="form-row">
+            <div class="field-8">
+              <label for="destination">Destination</label>
+              <input id="destination" name="destination" type="text" placeholder="e.g., Tokyo, Dubai, India" required />
+            </div>
+            <div class="field-4">
+              <label for="travelers">Travelers</label>
+              <input id="travelers" name="travelers" type="number" min="1" value="4" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-4">
+              <label for="start">Start date</label>
+              <input id="start" name="start" type="date" required />
+            </div>
+            <div class="field-4">
+              <label for="end">End date</label>
+              <input id="end" name="end" type="date" required />
+            </div>
+            <div class="field-4">
+              <label for="budget">Budget (USD)</label>
+              <input id="budget" name="budget" type="number" min="0" step="50" placeholder="1500" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field-full">
+              <label for="interests">Interests</label>
+              <input id="interests" name="interests" type="text" placeholder="e.g., food, museums, nature, nightlife" />
+            </div>
+          </div>
+
+          
+
+          <div class="form-row">
+            <div class="field-full">
+              <label for="notes">Notes (optional)</label>
+              <textarea id="notes" name="notes" placeholder="Special requirements or must-see places"></textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="generate" type="submit" class="btn btn-primary">Generate Itinerary</button>
+            <button id="reset" type="button" class="btn btn-secondary">Reset</button>
+            <button id="demo" type="button" class="btn btn-secondary">Try demo data</button>
+            <span class="small muted right" id="status"></span>
+            <div class="small muted" style="margin-left:auto;">
+              API URL: <a href="#" id="api-url-display" style="color: var(--accent); text-decoration: underline;"></a>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Results -->
+      <section class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
+          <h2 style="margin:0; font-size:18px;">Itinerary</h2>
+          <div class="chips" id="summary-chips"></div>
+        </div>
+        <div id="results" class="results">
+          <div class="muted small">No itinerary yet. Fill the form and click Generate.</div>
+        </div>
+      </section>
+    </div>
+
+    <p class="footer">Client runs in-browser. Backend file: <a href="main.py" target="_blank" style="color: var(--accent); text-decoration: underline;">main.py</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('planner-form');
+    const resultsEl = document.getElementById('results');
+    const chipsEl = document.getElementById('summary-chips');
+    const statusEl = document.getElementById('status');
+    const resetBtn = document.getElementById('reset');
+    const demoBtn = document.getElementById('demo');
+    const settingsBtn = document.getElementById('settings-btn');
+    const apiUrlDisplay = document.getElementById('api-url-display');
+    function getApiUrl() {
+      try { return localStorage.getItem('trip:api') || 'http://localhost:8000/api/itinerary'; } catch (_) { return 'http://localhost:8000/api/itinerary'; }
+    }
+    function isDemoMode() {
+      const url = (getApiUrl() || '').trim().toLowerCase();
+      return url === 'demo' || url === '' || url === '#';
+    }
+    function getApiKey() {
+      try { return localStorage.getItem('trip:key') || ''; } catch (_) { return ''; }
+    }
+    function getBgUrl() {
+      try { return localStorage.getItem('trip:bg') || ''; } catch (_) { return ''; }
+    }
+    const CONFIG = (function() {
+      const fallback = {
+        request: {
+          destination: 'destination',
+          startDate: 'startDate',
+          endDate: 'endDate',
+          partySize: 'partySize',
+          budgetUsd: 'budgetUsd',
+          interests: 'interests',
+          notes: 'notes',
+          transport: 'transport',
+          rentalLocation: 'rentalLocation'
+        },
+        response: {
+          daysPath: 'days', // supports nested like "data.days"
+          titleField: 'title',
+          detailsField: 'details',
+          noteField: 'note'
+        }
+      };
+      try {
+        const raw = localStorage.getItem('trip:config');
+        if (!raw) return fallback;
+        const cfg = JSON.parse(raw);
+        return { ...fallback, ...cfg, request: { ...fallback.request, ...(cfg.request||{}) }, response: { ...fallback.response, ...(cfg.response||{}) } };
+      } catch (_) { return fallback; }
+    })();
+
+    function getAtPath(obj, path) {
+      if (!obj || !path) return undefined;
+      const parts = String(path).split('.');
+      let cur = obj;
+      for (const p of parts) {
+        if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {
+          cur = cur[p];
+        } else {
+          return undefined;
+        }
+      }
+      return cur;
+    }
+
+    async function fetchWithTimeout(resource, options = {}) {
+      const { timeoutMs = 15000, ...init } = options;
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(resource, { ...init, signal: controller.signal });
+        return res;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function dayDiff(a, b) {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const start = new Date(a + 'T00:00:00');
+      const end = new Date(b + 'T00:00:00');
+      return Math.max(1, Math.round((end - start) / msPerDay) + 1);
+    }
+
+    function renderChips({ destination, start, end, travelers, budget, interests, notes }) {
+      chipsEl.innerHTML = '';
+      const items = [
+        destination && `📍 ${destination}`,
+        start && end && `🗓️ ${formatDate(start)} – ${formatDate(end)} (${dayDiff(start, end)}d)`,
+        travelers && `👥 ${travelers}`,
+        budget && `💳 $${Number(budget).toLocaleString()}`,
+        interests && `✨ ${interests}`,
+        notes && `📝 ${String(notes).length > 50 ? String(notes).slice(0, 47) + '…' : notes}`
+      ].filter(Boolean);
+      items.forEach(text => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = text;
+        chipsEl.appendChild(chip);
+      });
+    }
+
+    function generateMockItinerary({ destination, start, end, interests }) {
+      const numDays = Math.max(1, dayDiff(start, end));
+      const interestList = (interests || '').split(',').map(s => s.trim()).filter(Boolean);
+      
+
+      // If user provided a destination, generate themed days for that location
+      if (destination && destination.trim()) {
+        // Special: rich Ahmedabad (Ahemdabad) multi-day plan
+        if (/ahmedabad|ahemdabad/i.test(destination)) {
+          const ahmPlaces = [
+            { t: 'Sabarmati Ashram', d: 'Morning: Sabarmati Ashram & riverfront walk • Afternoon: Sidi Saiyyed Mosque • Evening: Manek Chowk street food' },
+            { t: 'Adalaj Stepwell', d: 'Morning: Adalaj ni Vav (Stepwell) • Afternoon: Hutheesing Jain Temple • Evening: Law Garden night market' },
+            { t: 'Calico Museum & Heritage', d: 'Morning: Calico Museum (pre-book) • Afternoon: Heritage walk in old city (Bhadra) • Evening: Kankaria Lake' },
+            { t: 'Sarkhej Roza', d: 'Morning: Sarkhej Roza complex • Afternoon: Science City • Evening: SG Highway cafes' },
+            { t: 'Modhera & Patan (day trip)', d: 'Morning: Sun Temple, Modhera • Afternoon: Rani ki Vav, Patan • Evening: Back to Ahmedabad for dinner' }
+          ];
+          const days = [];
+          for (let i = 0; i < numDays; i++) {
+            const p = ahmPlaces[i % ahmPlaces.length];
+            const focus = interestList[i % Math.max(1, interestList.length)] || '';
+            days.push({
+              title: `Day ${i + 1} — ${destination}: ${p.t}`,
+              details: `${p.d}` + (focus ? ` • Special focus: ${focus}` : ''),
+              note: 'UNESCO Heritage City'
+            });
+          }
+          return days;
+        }
+        const templates = [
+          'Morning: Historic center walking tour • Afternoon: Signature museum • Evening: Iconic viewpoint',
+          'Morning: Street food crawl • Afternoon: Art district cafes • Evening: Night market',
+          'Morning: Botanical gardens or park • Afternoon: Riverfront or lakeside • Evening: Local music show',
+          'Morning: Landmark temple/church • Afternoon: Craft or cooking class • Evening: Rooftop sunset',
+          'Morning: Day trip to a nearby gem • Afternoon: Scenic hike/bike • Evening: Relaxing tea/wine bar'
+        ];
+        const days = [];
+        for (let i = 0; i < numDays; i++) {
+          const template = templates[i % templates.length];
+          const focus = interestList[i % Math.max(1, interestList.length)] || '';
+          days.push({
+            title: `Day ${i + 1} — ${destination}`,
+            details: template + (focus ? ` • Special focus: ${focus}` : ''),
+            note: `Explore ${destination}`
+          });
+        }
+        return days;
+      }
+
+      // Fallback: rotate through famous destinations (prioritized India highlights)
+      const worldPlaces = [
+        { t: 'Delhi — Heritage & Food', d: 'Morning: Red Fort & Jama Masjid • Afternoon: Chandni Chowk food crawl • Evening: India Gate & Rajpath', n: 'Capital Culture' },
+        { t: 'Agra — Taj Mahal', d: 'Morning: Taj Mahal sunrise • Afternoon: Agra Fort • Evening: Mehtab Bagh views', n: 'Symbol of Love' },
+        { t: 'Jaipur — Pink City', d: 'Morning: Amber Fort • Afternoon: City Palace & Jantar Mantar • Evening: Hawa Mahal & bazaars', n: 'Royal Rajasthan' },
+        { t: 'Varanasi — Ghats & Ganga Aarti', d: 'Morning: Sunrise boat ride • Afternoon: Old city lanes • Evening: Dashashwamedh Ghat Aarti', n: 'Spiritual India' },
+        { t: 'Mumbai — Sea & Cinema', d: 'Morning: Gateway of India • Afternoon: Colaba & Marine Drive • Evening: Bandra sea link & street eats', n: 'Maximum City' },
+        { t: 'Goa — Beaches & Forts', d: 'Morning: Calangute/Baga beach • Afternoon: Aguada/Chapora Fort • Evening: Night markets/cafes', n: 'Coastal Chill' },
+        { t: 'Kerala — Backwaters (Alleppey)', d: 'Morning: Houseboat cruise • Afternoon: Village canals • Evening: Kathakali or Ayurvedic spa', n: 'God’s Own Country' },
+        { t: 'Rishikesh — Yoga & Adventure', d: 'Morning: Ganga riverside walk • Afternoon: Laxman Jhula & rafting (seasonal) • Evening: Parmarth Aarti', n: 'Himalayan Foothills' },
+        { t: 'Amritsar — Golden Temple', d: 'Morning: Harmandir Sahib • Afternoon: Langar & local cuisine • Evening: Wagah Border ceremony', n: 'Punjab Pride' },
+        { t: 'Junagadh — Gir & Uperkot', d: 'Morning: Gir National Park safari (seasonal) • Afternoon: Uperkot Fort & Buddhist caves • Evening: Mahabat Maqbara area', n: 'Bhavnath Temple' },
+        { t: 'Hampi — Ruins & Boulders', d: 'Morning: Virupaksha Temple • Afternoon: UNESCO ruins circuit • Evening: Sunset point', n: 'Vijayanagara Legacy' },
+        { t: 'Udaipur — Lakes & Palaces', d: 'Morning: City Palace • Afternoon: Lake Pichola boat ride • Evening: Bagore Ki Haveli show', n: 'Venice of the East' },
+        { t: 'Jammu & Kashmir — Srinagar & Gulmarg', d: 'Morning: Shikara ride in Dal Lake • Afternoon: Mughal Gardens • Evening: Gulmarg views (seasonal cable car)', n: 'Paradise on Earth' },
+        { t: 'Ladakh — High Altitude', d: 'Morning: Shanti Stupa & Leh Palace • Afternoon: Monasteries (Hemis/Thiksey) • Evening: Stargazing', n: 'Trans-Himalayan' },
+        { t: 'Paris — Eiffel Tower', d: 'Morning: Eiffel Tower • Afternoon: Louvre • Evening: Seine cruise', n: 'City of Lights' },
+        { t: 'Rome — Colosseum & Vatican', d: 'Morning: Colosseum • Afternoon: Vatican Museums • Evening: Trastevere', n: 'History & Art' },
+        { t: 'Beijing — Great Wall', d: 'Morning: Mutianyu hike • Afternoon: Ming Tombs • Evening: Dumpling dinner', n: 'Walking History' },
+        { t: 'Sydney — Opera House', d: 'Morning: Bondi walk • Afternoon: Opera House • Evening: Harbour Bridge', n: 'Harbour City' },
+        { t: 'New York — Manhattan', d: 'Morning: Liberty Island • Afternoon: Central Park • Evening: Times Square', n: 'The Big Apple' },
+        { t: 'Istanbul — Two Continents', d: 'Morning: Hagia Sophia • Afternoon: Grand Bazaar • Evening: Bosphorus cruise', n: 'East meets West' },
+        { t: 'Bangkok — Temples & Food', d: 'Morning: Grand Palace • Afternoon: Wat Arun • Evening: Night markets', n: 'Vibrant Thailand' },
+        { t: 'Barcelona — Gaudí', d: 'Morning: Sagrada Família • Afternoon: Park Güell • Evening: La Rambla', n: 'Catalan Charm' }
+        
+      ];
+      const days = [];
+      for (let i = 0; i < numDays; i++) {
+        const p = worldPlaces[i % worldPlaces.length];
+        days.push({ title: `Day ${i + 1} — ${p.t}`, details: `${p.d}`, note: p.n });
+      }
+      return days;
+    }
+
+    function renderResults(days) {
+      resultsEl.innerHTML = '';
+      days.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'itinerary-day';
+        card.innerHTML = `
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <strong>${d.title}</strong>
+            <span class="small muted">${d.note}</span>
+          </div>
+          <div style="margin-top:8px;">${d.details}</div>
+        `;
+        resultsEl.appendChild(card);
+      });
+    }
+
+    function validateDates(start, end) {
+      if (!start || !end) return 'Please select both start and end dates.';
+      if (new Date(end) < new Date(start)) return 'End date must be after start date.';
+      return '';
+    }
+
+    function highlightInvalid(el, message) {
+      if (!el) return;
+      el.style.borderColor = 'var(--danger)';
+      el.style.boxShadow = '0 0 0 4px rgba(255,107,107,.15)';
+      statusEl.textContent = message;
+      statusEl.style.color = 'var(--danger)';
+      el.focus();
+      setTimeout(() => {
+        el.style.borderColor = '';
+        el.style.boxShadow = '';
+      }, 1200);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      // Basic validation for key fields
+      if (!data.destination) {
+        return highlightInvalid(document.getElementById('destination'), 'Destination is required.');
+      }
+      const error = validateDates(data.start, data.end);
+      if (error) {
+        statusEl.textContent = error;
+        statusEl.style.color = 'var(--danger)';
+        return highlightInvalid(!data.start ? document.getElementById('start') : document.getElementById('end'), error);
+      }
+
+      statusEl.textContent = 'Generating…';
+      statusEl.style.color = 'var(--muted)';
+
+      try {
+        // Build payload using CONFIG.request mapping
+        const requestPayload = {};
+        requestPayload[CONFIG.request.destination] = data.destination;
+        requestPayload[CONFIG.request.startDate] = data.start;
+        requestPayload[CONFIG.request.endDate] = data.end;
+        requestPayload[CONFIG.request.partySize] = Number(data.travelers || 1);
+        requestPayload[CONFIG.request.budgetUsd] = data.budget ? Number(data.budget) : null;
+        requestPayload[CONFIG.request.interests] = (data.interests || '').split(',').map(s => s.trim()).filter(Boolean);
+        requestPayload[CONFIG.request.notes] = data.notes || null;
+        // Optional mappings if present in config
+        
+        
+
+        // If demo mode, skip API and use local mock data
+        if (isDemoMode()) {
+          const days = generateMockItinerary(data);
+          renderChips(data);
+          renderResults(days);
+          statusEl.textContent = `Demo mode • ${days.length} day plan ready`;
+          statusEl.style.color = 'var(--success)';
+          try { localStorage.setItem('trip:last', JSON.stringify(data)); } catch (_) {}
+          return;
+        }
+
+        const res = await fetchWithTimeout(getApiUrl(), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(getApiKey() ? { 'Authorization': `Bearer ${getApiKey()}` } : {})
+          },
+          body: JSON.stringify(requestPayload),
+          timeoutMs: 20000
+        });
+
+        if (!res.ok) {
+          throw new Error(`API ${res.status} ${res.statusText}`);
+        }
+
+        let responsePayload;
+        const text = await res.text();
+        try { responsePayload = JSON.parse(text); } catch (_) { responsePayload = { raw: text }; }
+
+        // Prefer exact response shape; normalize into days[] using CONFIG.response
+        let days = [];
+        const mappedDays = getAtPath(responsePayload, CONFIG.response.daysPath);
+        if (Array.isArray(mappedDays)) {
+          days = mappedDays.map(d => ({
+            title: d?.[CONFIG.response.titleField] || 'Day',
+            details: d?.[CONFIG.response.detailsField] || '',
+            note: d?.[CONFIG.response.noteField] || ''
+          }));
+        } else if (responsePayload && responsePayload.itinerary) {
+          const lines = String(responsePayload.itinerary).split(/\n+/).filter(Boolean);
+          days = lines.map((line, idx) => ({ title: `Day ${idx + 1}`, details: line, note: '' }));
+        } else if (responsePayload && responsePayload.choices && responsePayload.choices[0]?.message?.content) {
+          // OpenAI-style string content; try to extract JSON, else split lines
+          const content = responsePayload.choices[0].message.content.trim();
+          try {
+            const maybe = JSON.parse(content);
+            if (Array.isArray(maybe.days)) {
+              days = maybe.days.map(d => ({ title: d.title || 'Day', details: d.details || '', note: d.note || '' }));
+            }
+          } catch (_) {
+            const blocks = content.split(/\n\n+/).filter(Boolean);
+            days = blocks.map((b, i) => ({ title: `Day ${i + 1}`, details: b.replace(/\n/g, ' • '), note: '' }));
+          }
+        }
+
+        // Fallback to local mock if API returned nothing parseable
+        if (!days.length) {
+          days = generateMockItinerary(data);
+        }
+
+        renderChips(data);
+        renderResults(days);
+        statusEl.textContent = `Done • ${days.length} day plan ready`;
+        statusEl.style.color = 'var(--success)';
+        try { localStorage.setItem('trip:last', JSON.stringify(data)); } catch (_) {}
+      } catch (err) {
+        renderChips(data);
+        const days = generateMockItinerary(data);
+        renderResults(days);
+        statusEl.textContent = `Demo plan generated • ${days.length} day itinerary ready`;
+        statusEl.style.color = 'var(--success)';
+        try { console.error('Itinerary API error:', err); } catch (_) {}
+      }
+    });
+
+    settingsBtn?.addEventListener('click', () => {
+      const currentUrl = getApiUrl();
+      const currentKey = getApiKey();
+      const url = prompt('API URL', currentUrl);
+      if (url !== null) {
+        try { localStorage.setItem('trip:api', url.trim()); } catch (_) {}
+        if (apiUrlDisplay) apiUrlDisplay.textContent = getApiUrl();
+      }
+      const key = prompt('API Key (stored locally)', currentKey);
+      if (key !== null) {
+        try { localStorage.setItem('trip:key', key.trim()); } catch (_) {}
+      }
+      const bg = prompt('Background image URL (optional, full image URL)', getBgUrl());
+      if (bg !== null) {
+        try { 
+          localStorage.setItem('trip:bg', bg.trim()); 
+          if (bg.trim()) { document.documentElement.style.setProperty('--bg-image', `url("${bg.trim()}")`); }
+          else { document.documentElement.style.removeProperty('--bg-image'); }
+        } catch (_) {}
+      }
+      const cfgRaw = (() => { try { return localStorage.getItem('trip:config'); } catch (_) { return ''; } })();
+      const defaultCfg = JSON.stringify(CONFIG, null, 2);
+      const edited = prompt('Config (JSON) for request/response mapping', cfgRaw || defaultCfg);
+      if (edited !== null) {
+        try {
+          const parsed = JSON.parse(edited);
+          localStorage.setItem('trip:config', JSON.stringify(parsed));
+          alert('Config saved. Reload the page to apply.');
+        } catch (e) {
+          alert('Invalid JSON. Config not saved.');
+        }
+      }
+    });
+
+    // API URL display binding
+    apiUrlDisplay?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const current = getApiUrl();
+      const next = prompt('Set API URL (e.g., http://localhost:8000/api/itinerary)', current);
+      if (next !== null) {
+        try { localStorage.setItem('trip:api', next.trim()); } catch (_) {}
+        apiUrlDisplay.textContent = getApiUrl();
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      resultsEl.innerHTML = '<div class="muted small">No itinerary yet. Fill the form and click Generate.</div>';
+      chipsEl.innerHTML = '';
+      statusEl.textContent = '';
+    });
+
+    demoBtn?.addEventListener('click', () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
+      const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 18);
+      document.getElementById('destination').value = 'Tokyo, Japan';
+      document.getElementById('travelers').value = '2';
+      document.getElementById('start').value = start.toISOString().slice(0,10);
+      document.getElementById('end').value = end.toISOString().slice(0,10);
+      document.getElementById('budget').value = '2000';
+      document.getElementById('interests').value = 'food, museums, technology, nature';
+      document.getElementById('notes').value = 'Prefer public transport, avoid crowded spots at noon.';
+      try { localStorage.setItem('trip:api', 'demo'); } catch(_) {}
+      if (apiUrlDisplay) apiUrlDisplay.textContent = getApiUrl();
+      statusEl.textContent = 'Demo mode enabled. Click Generate to use local demo data.';
+      statusEl.style.color = 'var(--muted)';
+    });
+
+    // Restore last session
+    (function restore() {
+      try {
+        const raw = localStorage.getItem('trip:last');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        for (const [k, v] of Object.entries(data)) {
+          const el = document.getElementById(k);
+          if (el) el.value = v;
+        }
+        renderChips(data);
+      } catch (e) {}
+      // Apply background image if configured
+      try {
+        const bg = getBgUrl();
+        if (bg) {
+          document.documentElement.style.setProperty('--bg-image', `url("${bg}")`);
+        }
+      } catch (_) {}
+      try {
+        if (apiUrlDisplay) apiUrlDisplay.textContent = getApiUrl();
+      } catch (_) {}
+    })();
+   </script>
+</body>
+</html>
+
